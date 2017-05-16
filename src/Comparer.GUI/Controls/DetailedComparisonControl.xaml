@@ -1,0 +1,159 @@
+﻿<UserControl x:Class="Comparer.GUI.Controls.DetailedComparisonControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="800">
+   
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="60*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="50*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Grid.Row="0" Margin="5" >
+            <Button Content="Peek Columns"  Command="{Binding PeekColumnsCommand}" />
+            <Button Content="Perform Detailed Comparison"  Command="{Binding RunCommand}" />
+            <Button Content="View Comparison Report"  Command="{Binding ViewComparisonReportCommand}" />
+        </StackPanel>
+
+        <Grid Grid.Column="1" Grid.ColumnSpan="2">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding DetailedCompareResult.ComparisonErrors.Count, 
+                        StringFormat='Missmatches: {0}'}" />
+
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding MissingKeyErrors.Count, 
+                        StringFormat='Missing Keys in Right: {0}'}" />
+
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding MultipleRowsPerKeyErrors.Count, 
+                        StringFormat='Multiple Rows Per Key: {0}'}" />
+
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding ValuesDoesNotMatchErrors.Count, 
+                        StringFormat='Non-Matching Values: {0}'}" />
+
+                </StackPanel>
+                <StackPanel Margin="0 10 0 0">
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding DetailedCompareResult.LeftRowCount, StringFormat='Row Count Left: {0}'}" />
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding DetailedCompareResult.RightRowCount, StringFormat='Row Count Right: {0}'}" />
+                </StackPanel>
+
+            </StackPanel>
+        </Grid>
+
+        <Grid Grid.Column="0" Grid.Row="1" Margin="5" >
+            <TextBlock Text="Query Keys:" Margin="5 2 5 2" />
+
+            <ListView Margin="5 20 0 0" ItemsSource="{Binding QueryMetaData.Columns}" Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0 2 0 2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox IsChecked="{Binding IsKeyColumn}" Grid.Column="0" />
+                            <TextBlock Text="{Binding ColumnName}" Grid.Column="1" />
+
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Grid.Column="1" Grid.Row="1" Margin="5" >
+            <TextBlock Text="Ignored Columns:" Margin="5 2 5 2" />
+
+            <ListView Margin="5 20 0 0" ItemsSource="{Binding QueryMetaData.Columns}" Height="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0 2 0 2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox IsChecked="{Binding IsIgnoredInComparisson}" Grid.Column="0" />
+                            <TextBlock Text="{Binding ColumnName}" Grid.Column="1" />
+
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+        <Grid Grid.Column="2" Grid.Row="1" Margin="5">
+            <TextBlock Text="Value Differences:" Margin="5 2 5 2" />
+            <ListView ItemsSource="{Binding DetailedCompareResult.ComparisonErrors}" Margin="5 20 0 0">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0 2 0 2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*" />
+                                <ColumnDefinition Width="20*" />
+                                <ColumnDefinition Width="50*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="Key" Margin="2" Grid.Column="0" />
+                            <ListView  Grid.Column="1" ItemsSource="{Binding KeyValue}" Margin="2">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding .}" Margin="2" />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+
+                            <Expander Header="Value Differences" Grid.Column="2">
+                                <Grid Margin="2">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="24" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="250" />
+                                            <ColumnDefinition Width="400" />
+                                            <ColumnDefinition Width="400" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Text="ColumnName" Grid.Column="0" />
+                                        <TextBlock Text="ExpectedValue" Grid.Column="1" />
+                                        <TextBlock Text="ActualValue" Grid.Column="2" />
+
+                                    </Grid>
+                                    <ListView ItemsSource="{Binding ValueDifferences}" Grid.Row="1" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel>
+                                                    <Grid>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="250" />
+                                                            <ColumnDefinition Width="400" />
+                                                            <ColumnDefinition Width="400" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <TextBlock Text="{Binding ColumnName}" Grid.Column="0" />
+                                                        <TextBlock Text="{Binding ExpectedValue}" Grid.Column="1" />
+                                                        <TextBlock Text="{Binding ActualValue}" Grid.Column="2" />
+                                                    </Grid>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </Grid>
+                            </Expander>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+
+    </Grid>
+</UserControl>

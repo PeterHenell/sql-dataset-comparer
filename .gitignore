@@ -1,0 +1,6 @@
+src/LetsCompareDataSets/bin/
+src/LetsCompareDataSets/obj/
+src/Comparer.GUI/obj/
+src/ConnectionStringCreatorGUI/bin/
+src/ConnectionStringCreatorGUI/obj/
+src/Comparer.GUI/bin/
