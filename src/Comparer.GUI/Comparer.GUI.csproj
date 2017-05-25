@@ -63,6 +63,9 @@
     <Compile Include="Controls\DetailedComparisonControl.xaml.cs">
       <DependentUpon>DetailedComparisonControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\QueryRunningControl.xaml.cs">
+      <DependentUpon>QueryRunningControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Logging\LogWriter.cs" />
     <Compile Include="StatsReportWindow.xaml.cs">
       <DependentUpon>StatsReportWindow.xaml</DependentUpon>
@@ -83,6 +86,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\QueryConfig.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\QueryRunningControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

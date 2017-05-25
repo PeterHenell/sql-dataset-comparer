@@ -5,22 +5,36 @@
         Title="Compare Data Sets" Height="Auto" Width="Auto">
 
     <Window.Resources>
-        <Style TargetType="FrameworkElement" x:Key="BaseStyle">
-            <Setter Property="IsEnabled" Value="{Binding DataContext.UnLocked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}} }" />
+        <Style x:Key="OverlayStyle" TargetType="Grid">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DataContext.UnLocked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="False">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding DataContext.UnLocked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </DataTrigger>
+            </Style.Triggers>
         </Style>
-
-        <Style TargetType="TextBlock" BasedOn="{StaticResource BaseStyle}" />
-        <Style TargetType="TextBox" BasedOn="{StaticResource BaseStyle}" />
-        <Style TargetType="Grid" BasedOn="{StaticResource BaseStyle}" />
-
     </Window.Resources>
 
-    <TabControl>
-        <TabItem Header="Configure Queries" IsSelected="{Binding IsConfigureQueriesSelected}">
-            <c:ConfigureQueriesControl DataContext="{Binding ConfigureQueriesViewModel}" />
-        </TabItem>
-        <TabItem Header="Detailed Comparison" IsSelected="{Binding IsDetailedComparisonSelected}">
-            <c:DetailedComparisonControl DataContext="{Binding ColumnDiffViewModel}" />
-        </TabItem>
-    </TabControl>
+    <Grid>
+        <Grid x:Name="Overlay" Panel.ZIndex="1000" Style="{StaticResource OverlayStyle}">
+            <Grid.Background>
+                <SolidColorBrush Color="Black" Opacity=".5"/>
+            </Grid.Background>
+
+            <c:QueryRunningControl DataContext="{Binding .}" Width="500" Height="120" />
+        </Grid>
+
+        <TabControl>
+            <TabItem Header="Configure Queries" IsSelected="{Binding IsConfigureQueriesSelected}">
+                <c:ConfigureQueriesControl DataContext="{Binding ConfigureQueriesViewModel}" />
+            </TabItem>
+            <TabItem Header="Detailed Comparison" IsSelected="{Binding IsDetailedComparisonSelected}">
+                <c:DetailedComparisonControl DataContext="{Binding ColumnDiffViewModel}" />
+            </TabItem>
+        </TabControl>
+
+    </Grid>
 </Window>

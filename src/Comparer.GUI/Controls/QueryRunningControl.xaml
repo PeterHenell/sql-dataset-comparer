@@ -1,0 +1,53 @@
+﻿<UserControl x:Class="Comparer.GUI.Controls.QueryRunningControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Comparer.GUI.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="120" d:DesignWidth="500">
+
+    <Border Margin="4"
+                BorderBrush="White"
+                Background="LightGray"
+                BorderThickness="1,1,1,1"
+                CornerRadius="2,2,2,2">
+
+        <Grid Margin="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50*"/>
+                <RowDefinition Height="50*"/>
+            </Grid.RowDefinitions>
+
+
+
+            <Grid Grid.Row="0" Grid.Column="1">
+                <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding QueryTimer, 
+                        StringFormat='Timer {0}'}" />
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="1" Margin="7">
+                <Button Content="Cancel" Command="{Binding AbortQueryExecutionCommand}" />
+            </Grid>
+
+            <Grid Grid.Row="0" Grid.Column="0">
+                <StackPanel>
+                    <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding QueryConfiguration.Left.OutputFile, 
+                        StringFormat='Query {0} is Running'}" />
+                </StackPanel>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="0">
+                <TextBlock FontSize="16" Margin="7 0 7 0" Text="{Binding QueryConfiguration.Right.OutputFile, 
+                        StringFormat='Query {0} is running'}" />
+            </Grid>
+
+        </Grid>
+        <Border.Effect>
+            <DropShadowEffect Color="Gray" Opacity="0.5" />
+        </Border.Effect>
+    </Border>
+</UserControl>
