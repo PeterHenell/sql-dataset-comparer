@@ -17,11 +17,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Label Content="Connstr" Grid.Row="0" Grid.Column="0" />
-        <StackPanel Grid.Column="1" Grid.Row="0" Orientation="Horizontal" Width="Auto">
-            <Button Content="Set..." Command="{Binding OpenConnectionGUICommand}" Width="40" />
-            <TextBox Text="{Binding ConnectionString, Mode=TwoWay}" Width="Auto" />
-        </StackPanel>
+        <Button Grid.Column="0" Grid.Row="0" Content="Connection..." Command="{Binding OpenConnectionGUICommand}" />
+        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ConnectionString, Mode=TwoWay}" Width="Auto" />
+
         <Label Content="Query Nick" Grid.Row="1" Grid.Column="0" />
         <TextBox Text="{Binding OutputFile, Mode=TwoWay}"  Grid.Column="1" Grid.Row="1" />
 
@@ -31,7 +29,7 @@
                  Grid.ColumnSpan="2" 
                  AcceptsReturn="True" 
                  TextWrapping="Wrap"
-                 Background="Wheat"/>
+                 Background="AliceBlue"/>
     </Grid>
 
 
