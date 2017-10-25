@@ -4,11 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
+             xmlns:c="clr-namespace:Comparer.GUI.Controls"
              d:DesignHeight="400" d:DesignWidth="800">
    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="40*"/>
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -89,9 +91,9 @@
             </ListView>
         </Grid>
 
-        <Grid Grid.Column="2" Grid.Row="1" Margin="5">
+        <Grid Grid.Column="2" Grid.Row="1" Margin="5" Grid.RowSpan="2">
             <TextBlock Text="Value Differences:" Margin="5 2 5 2" />
-            <ListView ItemsSource="{Binding DetailedCompareResult.ComparisonErrors}" Margin="5 20 0 0">
+            <ListView ItemsSource="{Binding DetailedCompareResult.ComparisonErrors}" Margin="5 20 0 0" Background="BlanchedAlmond">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <Grid Margin="0 2 0 2">
@@ -154,6 +156,7 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-
+        <c:QueryConfig DataContext="{Binding QueryConfiguration.Left}" Grid.Column="0" Grid.Row="2" />
+        <c:QueryConfig DataContext="{Binding QueryConfiguration.Right}" Grid.Column="1" Grid.Row="2" />
     </Grid>
 </UserControl>

@@ -56,6 +56,7 @@ namespace Comparer.GUI.ViewModels
             }
         }
 
+
         private InputTypes _inputType;
         public InputTypes InputType
         {
