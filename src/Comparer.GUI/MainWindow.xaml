@@ -32,15 +32,15 @@
                 <MenuItem Command="Copy" />
                 <MenuItem Command="Paste" />
             </MenuItem>
-            <MenuItem Header="_Projects" ItemsSource="{Binding Projects}">
+            <MenuItem Header="_Projects" ItemsSource="{Binding OpenProjects}">
                 <MenuItem.ItemTemplate>
                     <DataTemplate>
-                        <MenuItem Header="{Binding ProjectName}" Command="{Binding SelectActiveProjectCommand}" CommandParameter="{Binding}" />
+                        <MenuItem Header="{Binding ProjectName}" Command="{Binding SelectProjectCommand}" CommandParameter="{Binding}" />
                     </DataTemplate>
                 </MenuItem.ItemTemplate>
             </MenuItem>
         </Menu>
-        <Grid DockPanel.Dock="Bottom">
+        <Grid DockPanel.Dock="Bottom" DataContext="{Binding ActiveProject}">
             <Grid x:Name="Overlay" Panel.ZIndex="1000" Style="{StaticResource OverlayStyle}">
                 <Grid.Background>
                     <SolidColorBrush Color="Black" Opacity=".5"/>

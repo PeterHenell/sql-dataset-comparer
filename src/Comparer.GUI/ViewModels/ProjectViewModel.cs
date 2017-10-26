@@ -18,6 +18,21 @@ namespace Comparer.GUI.ViewModels
 {
     public class ProjectViewModel : ViewModelBase
     {
+
+        private string _projectName;
+        public string ProjectName
+        {
+            get { return _projectName; }
+            set
+            {
+                if (_projectName != value)
+                {
+                    _projectName = value;
+                    RaisePropertyChanged("ProjectName");
+                }
+            }
+        }
+
         private bool _locked;
         public bool UnLocked
         {
@@ -95,6 +110,7 @@ namespace Comparer.GUI.ViewModels
 
         public ProjectViewModel()
         {
+            ProjectName = "no name yet";
             UnLocked = true;
             IsConfigureQueriesSelected = true;
             IsDetailedComparisonSelected = false;
