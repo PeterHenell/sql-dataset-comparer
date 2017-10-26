@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
@@ -34,7 +35,7 @@ namespace Comparer.GUI.ViewModels
             }
         }
 
-        
+
 
         private ProjectViewModel _activeProject;
         public ProjectViewModel ActiveProject
@@ -51,50 +52,80 @@ namespace Comparer.GUI.ViewModels
         }
 
         public RelayCommand<ProjectViewModel> SelectProjectCommand { private set; get; }
+        public RelayCommand NewProjectCommand { private set; get; }
+        public RelayCommand OpenProjectCommand { private set; get; }
+        public RelayCommand CloseActiveProjectCommand { private set; get; }
+        public RelayCommand ExitWindowCommand { private set; get; }
+        public RelayCommand SaveProjectCommand { private set; get; }
+        public RelayCommand SaveAsProjectCommand { private set; get; }
+        
+
 
         public MainWindowViewModel()
         {
             _openProjects = new ObservableCollection<ProjectViewModel>();
 
-            LoadCurrentProject();
 
-            SelectProjectCommand = new RelayCommand<ProjectViewModel>((project) => 
+            SelectProjectCommand = new RelayCommand<ProjectViewModel>((project) =>
             {
                 ActiveProject = project;
             });
-        }
 
-        private void LoadCurrentProject()
-        {
-            var proj = new ProjectViewModel();
-
-            // Load saved state if exists
-            if (System.IO.File.Exists(ProjectViewModel.SaveFilePath))
+            NewProjectCommand = new RelayCommand(() =>
             {
-                try
-                {
-                    using (var stream = System.IO.File.OpenRead(ProjectViewModel.SaveFilePath))
-                    {
-                        var serializer = new XmlSerializer(typeof(QueryConfiguration));
-                        var loaded = serializer.Deserialize(stream) as QueryConfiguration;
+                var proj = new ProjectViewModel();
+                proj.ProjectName = "Unnamed Project"; // bug waiting to happen. names should be more unique because of how saving saving works at
+                ActiveProject = proj;
+                OpenProjects.Add(proj);
+            });
 
-                        proj.QueryConfiguration = loaded;
+            CloseActiveProjectCommand = new RelayCommand(() =>
+            {
+                if (ActiveProject != null)
+                {
+                    // TODO: Ask if to save first
+                    ActiveProject.SaveState();
+                    OpenProjects.Remove(ActiveProject);
+
+                    ActiveProject = OpenProjects.LastOrDefault();
+                }
+            });
+
+            OpenProjectCommand = new RelayCommand(() =>
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var proj = ProjectViewModel.FromFile(openFileDialog.FileName);
+                    if (proj != null)
+                    {
+                        ActiveProject = proj;
                         OpenProjects.Add(proj);
                     }
                 }
-                catch (Exception ex)
+            });
+
+            SaveProjectCommand = new RelayCommand(() => {
+                ActiveProject.SaveState();
+            });
+
+            SaveAsProjectCommand = new RelayCommand(() => {
+                SaveFileDialog saveDialog = new SaveFileDialog();
+                if (saveDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Console.WriteLine(ex.ToString());
-                    // in case of failed deserialization, we kill the file.
-                    //System.IO.File.Delete(MainWindowViewModel.SaveFilePath);
+                    ActiveProject.ProjectName = saveDialog.FileName;
+                    ActiveProject.SaveState();
                 }
-            }
-            ActiveProject = proj;
+            });
         }
 
         internal void SaveState()
         {
-            ActiveProject.SaveState();
+            foreach (var item in OpenProjects)
+            {
+                item.SaveState();
+            }
         }
     }
 }
+

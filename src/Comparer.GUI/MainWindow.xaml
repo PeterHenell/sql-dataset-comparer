@@ -22,10 +22,13 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
-                <MenuItem Command="New" />
-                <MenuItem Command="Close" />
+                <MenuItem Header="_New" Command="{Binding NewProjectCommand}" />
+                <MenuItem Header="_Open" Command="{Binding OpenProjectCommand}" />
+                <MenuItem Header="_Save" Command="{Binding SaveProjectCommand}" />
+                <MenuItem Header="Save _As" Command="{Binding SaveAsProjectCommand}" />
+                <MenuItem Header="_Close" Command="{Binding CloseActiveProjectCommand}" />
                 <Separator />
-                <MenuItem Header="_Exit" />
+                <MenuItem Header="_Exit" Command="{Binding ExitWindowCommand}" />
             </MenuItem>
             <MenuItem Header="_Edit">
                 <MenuItem Command="Cut" />

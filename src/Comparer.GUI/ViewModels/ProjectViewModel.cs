@@ -110,7 +110,7 @@ namespace Comparer.GUI.ViewModels
 
         public ProjectViewModel()
         {
-            ProjectName = "no name yet";
+            ProjectName = "Project1.xml";
             UnLocked = true;
             IsConfigureQueriesSelected = true;
             IsDetailedComparisonSelected = false;
@@ -145,10 +145,15 @@ namespace Comparer.GUI.ViewModels
             IsConfigureQueriesSelected = false;
         }
 
-        public static string SaveFilePath =
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "CompareResults.GUI.xml");
+        //public string SaveFilePath
+        //{
+        //    get
+        //    {
+        //        return Path.Combine(
+        //            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        //            ProjectName);
+        //    }
+        //}
 
         private void SaveState(string path)
         {
@@ -162,7 +167,36 @@ namespace Comparer.GUI.ViewModels
 
         internal void SaveState()
         {
-            SaveState(SaveFilePath);
+            SaveState(ProjectName);
         }
+
+        public static ProjectViewModel FromFile(string fileName)
+        {
+            var proj = new ProjectViewModel();
+
+            // Load saved state if exists
+            if (System.IO.File.Exists(fileName))
+            {
+                proj.ProjectName = fileName;
+                try
+                {
+                    using (var stream = System.IO.File.OpenRead(fileName))
+                    {
+                        var serializer = new XmlSerializer(typeof(QueryConfiguration));
+                        var loaded = serializer.Deserialize(stream) as QueryConfiguration;
+
+                        proj.QueryConfiguration = loaded;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                    // in case of failed deserialization, we kill the file.
+                    //System.IO.File.Delete(MainWindowViewModel.SaveFilePath);
+                }
+            }
+            return proj;
+        }
+
     }
 }
