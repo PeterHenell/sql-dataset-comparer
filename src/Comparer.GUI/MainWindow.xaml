@@ -18,23 +18,46 @@
         </Style>
     </Window.Resources>
 
-    <Grid>
-        <Grid x:Name="Overlay" Panel.ZIndex="1000" Style="{StaticResource OverlayStyle}">
-            <Grid.Background>
-                <SolidColorBrush Color="Black" Opacity=".5"/>
-            </Grid.Background>
 
-            <c:QueryRunningControl DataContext="{Binding .}" Width="500" Height="120" />
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Command="New" />
+                <MenuItem Command="Close" />
+                <Separator />
+                <MenuItem Header="_Exit" />
+            </MenuItem>
+            <MenuItem Header="_Edit">
+                <MenuItem Command="Cut" />
+                <MenuItem Command="Copy" />
+                <MenuItem Command="Paste" />
+            </MenuItem>
+            <MenuItem Header="_Projects" ItemsSource="{Binding Projects}">
+                <MenuItem.ItemTemplate>
+                    <DataTemplate>
+                        <MenuItem Header="{Binding ProjectName}" Command="{Binding SelectActiveProjectCommand}" CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </MenuItem.ItemTemplate>
+            </MenuItem>
+        </Menu>
+        <Grid DockPanel.Dock="Bottom">
+            <Grid x:Name="Overlay" Panel.ZIndex="1000" Style="{StaticResource OverlayStyle}">
+                <Grid.Background>
+                    <SolidColorBrush Color="Black" Opacity=".5"/>
+                </Grid.Background>
+
+                <c:QueryRunningControl DataContext="{Binding}" Width="500" Height="120" />
+            </Grid>
+
+            <TabControl>
+                <TabItem Header="Configure Queries" IsSelected="{Binding IsConfigureQueriesSelected}">
+                    <c:ConfigureQueriesControl DataContext="{Binding ConfigureQueriesViewModel}" />
+                </TabItem>
+                <TabItem Header="Detailed Comparison" IsSelected="{Binding IsDetailedComparisonSelected}">
+                    <c:DetailedComparisonControl DataContext="{Binding ColumnDiffViewModel}" />
+                </TabItem>
+            </TabControl>
+
         </Grid>
-
-        <TabControl>
-            <TabItem Header="Configure Queries" IsSelected="{Binding IsConfigureQueriesSelected}">
-                <c:ConfigureQueriesControl DataContext="{Binding ConfigureQueriesViewModel}" />
-            </TabItem>
-            <TabItem Header="Detailed Comparison" IsSelected="{Binding IsDetailedComparisonSelected}">
-                <c:DetailedComparisonControl DataContext="{Binding ColumnDiffViewModel}" />
-            </TabItem>
-        </TabControl>
-
-    </Grid>
+    </DockPanel>
 </Window>

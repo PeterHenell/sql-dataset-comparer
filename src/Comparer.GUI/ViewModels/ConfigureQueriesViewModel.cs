@@ -33,7 +33,7 @@ namespace Comparer.GUI.ViewModels
             }
         }
 
-        public MainWindowViewModel MainViewModel { get; set; }
+        public ProjectViewModel MainViewModel { get; set; }
         
         public ICommand RunCommand { get; private set; }
         public ICommand PerformDetailedComparisonCommand { get; private set; }
@@ -49,11 +49,11 @@ namespace Comparer.GUI.ViewModels
         }
 
         public ConfigureQueriesViewModel()
-            : this(new MainWindowViewModel())
+            : this(new ProjectViewModel())
         {
         }
 
-        public ConfigureQueriesViewModel(MainWindowViewModel mainViewModel)
+        public ConfigureQueriesViewModel(ProjectViewModel mainViewModel)
         {
 
             this.MainViewModel = mainViewModel;

@@ -36,14 +36,14 @@ namespace Comparer.GUI
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.VM = new MainWindowViewModel();
+            this.VM = new ProjectViewModel();
 
             // Load saved state if exists
-            if (System.IO.File.Exists(MainWindowViewModel.SaveFilePath))
+            if (System.IO.File.Exists(ProjectViewModel.SaveFilePath))
             {
                 try
                 {
-                    using (var stream = System.IO.File.OpenRead(MainWindowViewModel.SaveFilePath))
+                    using (var stream = System.IO.File.OpenRead(ProjectViewModel.SaveFilePath))
                     {
                         var serializer = new XmlSerializer(typeof(QueryConfiguration));
                         var loaded = serializer.Deserialize(stream) as QueryConfiguration;
@@ -63,6 +63,6 @@ namespace Comparer.GUI
             this.DataContext = this.VM;
         }
 
-        public MainWindowViewModel VM { get; set; }
+        public ProjectViewModel VM { get; set; }
     }
 }

@@ -16,7 +16,7 @@ using System.Xml.Serialization;
 
 namespace Comparer.GUI.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class ProjectViewModel : ViewModelBase
     {
         private bool _locked;
         public bool UnLocked
@@ -93,7 +93,7 @@ namespace Comparer.GUI.ViewModels
 
         public QueryConfiguration QueryConfiguration { get; set; }
 
-        public MainWindowViewModel()
+        public ProjectViewModel()
         {
             UnLocked = true;
             IsConfigureQueriesSelected = true;
