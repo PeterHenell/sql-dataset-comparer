@@ -103,14 +103,30 @@ namespace Comparer.GUI.ViewModels
             }
         }
 
+        private bool _isProjectSelected;
+        public bool IsProjectSelected
+        {
+            get { return _isProjectSelected; }
+            set
+            {
+                if (_isProjectSelected != value)
+                {
+                    _isProjectSelected = value;
+                    RaisePropertyChanged("IsProjectSelected");
+                }
+            }
+        }
+
         private PropertyAppendLogWriter<ConfigureQueriesViewModel> _logWriter;
+        internal static readonly string UnNamedProjectName = "Unnamed Project";
+
         public PropertyAppendLogWriter<ConfigureQueriesViewModel> LogWriter { get { return _logWriter; } }
 
         public QueryConfiguration QueryConfiguration { get; set; }
+        
 
         public ProjectViewModel()
         {
-            ProjectName = "Project1.xml";
             UnLocked = true;
             IsConfigureQueriesSelected = true;
             IsDetailedComparisonSelected = false;

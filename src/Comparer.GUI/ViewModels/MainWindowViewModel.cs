@@ -55,6 +55,7 @@ namespace Comparer.GUI.ViewModels
         public RelayCommand NewProjectCommand { private set; get; }
         public RelayCommand OpenProjectCommand { private set; get; }
         public RelayCommand CloseActiveProjectCommand { private set; get; }
+        public RelayCommand CloseAllCommand { private set; get; }
         public RelayCommand ExitWindowCommand { private set; get; }
         public RelayCommand SaveProjectCommand { private set; get; }
         public RelayCommand SaveAsProjectCommand { private set; get; }
@@ -68,14 +69,14 @@ namespace Comparer.GUI.ViewModels
 
             SelectProjectCommand = new RelayCommand<ProjectViewModel>((project) =>
             {
-                ActiveProject = project;
+                SelectActiveProject(project);
             });
 
             NewProjectCommand = new RelayCommand(() =>
             {
                 var proj = new ProjectViewModel();
-                proj.ProjectName = "Unnamed Project"; // bug waiting to happen. names should be more unique because of how saving saving works at
-                ActiveProject = proj;
+                proj.ProjectName = ProjectViewModel.UnNamedProjectName; // bug waiting to happen. names should be more unique because of how saving saving works at
+                SelectActiveProject(proj);
                 OpenProjects.Add(proj);
             });
 
@@ -87,7 +88,7 @@ namespace Comparer.GUI.ViewModels
                     ActiveProject.SaveState();
                     OpenProjects.Remove(ActiveProject);
 
-                    ActiveProject = OpenProjects.LastOrDefault();
+                    SelectActiveProject(OpenProjects.LastOrDefault());
                 }
             });
 
@@ -99,24 +100,61 @@ namespace Comparer.GUI.ViewModels
                     var proj = ProjectViewModel.FromFile(openFileDialog.FileName);
                     if (proj != null)
                     {
-                        ActiveProject = proj;
+                        SelectActiveProject(proj);
                         OpenProjects.Add(proj);
                     }
                 }
             });
 
             SaveProjectCommand = new RelayCommand(() => {
-                ActiveProject.SaveState();
-            });
-
-            SaveAsProjectCommand = new RelayCommand(() => {
-                SaveFileDialog saveDialog = new SaveFileDialog();
-                if (saveDialog.ShowDialog() == DialogResult.OK)
+                if (ActiveProject.ProjectName == ProjectViewModel.UnNamedProjectName)
                 {
-                    ActiveProject.ProjectName = saveDialog.FileName;
+                    SaveAs();
+                } else
+                {
                     ActiveProject.SaveState();
                 }
+                
             });
+
+            SaveAsProjectCommand = new RelayCommand(() =>
+            {
+                SaveAs();
+            });
+
+            CloseAllCommand = new RelayCommand(() => {
+                foreach (var item in OpenProjects)
+                {
+                    item.SaveState();
+                }
+
+                ActiveProject = null;
+                OpenProjects.Clear();
+            });
+        }
+
+        private void SelectActiveProject(ProjectViewModel project)
+        {
+            if (project != null)
+            {
+                if (ActiveProject != null)
+                {
+                    ActiveProject.IsProjectSelected = false;
+                }
+                
+                project.IsProjectSelected = true;
+            }
+            ActiveProject = project;
+        }
+
+        private void SaveAs()
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                ActiveProject.ProjectName = saveDialog.FileName;
+                ActiveProject.SaveState();
+            }
         }
 
         internal void SaveState()
