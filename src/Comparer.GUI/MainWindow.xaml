@@ -9,10 +9,10 @@
         <Style x:Key="OverlayStyle" TargetType="Grid">
             <Setter Property="Visibility" Value="Collapsed" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding DataContext.UnLocked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="False">
+                <DataTrigger Binding="{Binding UnLocked}" Value="False">
                     <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
-                <DataTrigger Binding="{Binding DataContext.UnLocked, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}" Value="True">
+                <DataTrigger Binding="{Binding UnLocked}" Value="True">
                     <Setter Property="Visibility" Value="Collapsed" />
                 </DataTrigger>
             </Style.Triggers>
@@ -30,7 +30,7 @@
                 <MenuItem Header="_Save" Command="{Binding SaveProjectCommand}" />
                 <MenuItem Header="Save _As" Command="{Binding SaveAsProjectCommand}" />
                 <MenuItem Header="_Close" Command="{Binding CloseActiveProjectCommand}" />
-                <MenuItem Header="C_lose All" Command="{Binding CloseAllCommand, ElementName=OpenProjectsMenu}" />
+                <MenuItem Header="C_lose All" Command="{Binding CloseAllCommand}" />
                 <Separator />
                 <MenuItem Header="_Exit" Command="{Binding ExitWindowCommand}" />
             </MenuItem>
@@ -41,31 +41,28 @@
             </MenuItem>
 
             <MenuItem Header="_Projects" Name="OpenProjectsMenu">
-                <MenuItem.ItemsSource>
-                    <CompositeCollection>
-                        <CollectionContainer Collection="{Binding Source={StaticResource ResourceKey=OpenProjectsCollection}}" />
-                    </CompositeCollection>
-                </MenuItem.ItemsSource>
-                <MenuItem.Resources>
-                    
-                    <Style TargetType="MenuItem">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsProjectSelected}" Value="True">
-                                <Setter Property="FontWeight" Value="UltraBold" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsProjectSelected}" Value="False">
-                                <Setter Property="FontWeight" Value="Normal" />
-                            </DataTrigger>
-                        </Style.Triggers>
+                <MenuItem ItemsSource="{Binding OpenProjects}">
+                    <MenuItem.Resources>
+                        <Style TargetType="MenuItem">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsProjectSelected}" Value="True">
+                                    <Setter Property="FontWeight" Value="UltraBold" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsProjectSelected}" Value="False">
+                                    <Setter Property="FontWeight" Value="Normal" />
+                                </DataTrigger>
+                            </Style.Triggers>
+
+                            <Setter Property="Header" Value="{Binding ProjectName}" />
+                            <Setter Property="Command" Value="{Binding ElementName=OpenProjectsMenu, Path=DataContext.SelectProjectCommand}" />
+                            <Setter Property="CommandParameter" Value="{Binding}" />
+                        </Style>
                         
-                        <Setter Property="Header" Value="{Binding ProjectName}" />
-                        <Setter Property="Command" Value="{Binding ElementName=OpenProjectsMenu, Path=DataContext.SelectProjectCommand}" />
-                        <Setter Property="CommandParameter" Value="{Binding}" />
-                    </Style>
-                </MenuItem.Resources>
+                    </MenuItem.Resources>
+                </MenuItem>
             </MenuItem>
         </Menu>
-        <Grid DockPanel.Dock="Bottom" DataContext="{Binding ActiveProject}">
+        <Grid DockPanel.Dock="Bottom" DataContext="{Binding ActiveProject}" IsEnabled="{Binding ElementName=MainWindowUI, Path=DataContext.IsActiveProjectOpen}">
             <Grid x:Name="Overlay" Panel.ZIndex="1000" Style="{StaticResource OverlayStyle}">
                 <Grid.Background>
                     <SolidColorBrush Color="Black" Opacity=".5"/>

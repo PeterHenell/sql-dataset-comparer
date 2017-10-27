@@ -35,8 +35,6 @@ namespace Comparer.GUI.ViewModels
             }
         }
 
-
-
         private ProjectViewModel _activeProject;
         public ProjectViewModel ActiveProject
         {
@@ -47,9 +45,17 @@ namespace Comparer.GUI.ViewModels
                 {
                     _activeProject = value;
                     RaisePropertyChanged("ActiveProject");
+                    RaisePropertyChanged("IsActiveProjectOpen");
                 }
             }
         }
+
+        private bool _isActiveProjectOpen;
+        public bool IsActiveProjectOpen
+        {
+            get { return ActiveProject != null; }
+        }
+
 
         public RelayCommand<ProjectViewModel> SelectProjectCommand { private set; get; }
         public RelayCommand NewProjectCommand { private set; get; }
@@ -59,13 +65,10 @@ namespace Comparer.GUI.ViewModels
         public RelayCommand ExitWindowCommand { private set; get; }
         public RelayCommand SaveProjectCommand { private set; get; }
         public RelayCommand SaveAsProjectCommand { private set; get; }
-        
-
 
         public MainWindowViewModel()
         {
             _openProjects = new ObservableCollection<ProjectViewModel>();
-
 
             SelectProjectCommand = new RelayCommand<ProjectViewModel>((project) =>
             {
