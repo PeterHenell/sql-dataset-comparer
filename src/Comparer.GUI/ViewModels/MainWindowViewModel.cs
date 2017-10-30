@@ -50,7 +50,6 @@ namespace Comparer.GUI.ViewModels
             }
         }
 
-        private bool _isActiveProjectOpen;
         public bool IsActiveProjectOpen
         {
             get { return ActiveProject != null; }
