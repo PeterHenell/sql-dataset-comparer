@@ -38,28 +38,6 @@ namespace Comparer.GUI
         {
             this.VM = new MainWindowViewModel();
 
-            // Load saved state if exists
-            if (System.IO.File.Exists(MainWindowViewModel.SaveFilePath))
-            {
-                try
-                {
-                    using (var stream = System.IO.File.OpenRead(MainWindowViewModel.SaveFilePath))
-                    {
-                        var serializer = new XmlSerializer(typeof(QueryConfiguration));
-                        var loaded = serializer.Deserialize(stream) as QueryConfiguration;
-
-                        this.VM.QueryConfiguration = loaded;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.ToString());
-                    // in case of failed deserialization, we kill the file.
-                    //System.IO.File.Delete(MainWindowViewModel.SaveFilePath);
-                }
-            }
-
-
             this.DataContext = this.VM;
         }
 

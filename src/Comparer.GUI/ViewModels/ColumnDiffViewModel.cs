@@ -92,7 +92,7 @@ namespace Comparer.GUI.ViewModels
 
         }
 
-        public ColumnDiffViewModel(MainWindowViewModel mainWindowViewModel)
+        public ColumnDiffViewModel(ProjectViewModel mainWindowViewModel)
         {
             this.MainWindowViewModel = mainWindowViewModel;
             this._detailedCompareResult = new DetailedCompareResult();
@@ -212,6 +212,6 @@ namespace Comparer.GUI.ViewModels
             return cols;
         }
 
-        public MainWindowViewModel MainWindowViewModel { get; set; }
+        public ProjectViewModel MainWindowViewModel { get; set; }
     }
 }

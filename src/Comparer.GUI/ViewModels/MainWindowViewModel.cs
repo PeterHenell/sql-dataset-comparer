@@ -4,12 +4,14 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml;
 using System.Xml.Serialization;
@@ -18,135 +20,152 @@ namespace Comparer.GUI.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        private bool _locked;
-        public bool UnLocked
+
+        private ObservableCollection<ProjectViewModel> _openProjects;
+        public ObservableCollection<ProjectViewModel> OpenProjects
         {
-            get { return _locked; }
+            get { return _openProjects; }
             set
             {
-                if (_locked != value)
+                if (_openProjects != value)
                 {
-                    _locked = value;
-                    RaisePropertyChanged("UnLocked");
+                    _openProjects = value;
+                    RaisePropertyChanged("OpenProjects");
                 }
             }
         }
 
-        private ColumnDiffViewModel _columnDiffViewModel;
-        public ColumnDiffViewModel ColumnDiffViewModel
+        private ProjectViewModel _activeProject;
+        public ProjectViewModel ActiveProject
         {
-            get { return _columnDiffViewModel; }
+            get { return _activeProject; }
             set
             {
-                if (_columnDiffViewModel != value)
+                if (_activeProject != value)
                 {
-                    _columnDiffViewModel = value;
-                    RaisePropertyChanged("ColumnDiffViewModel");
+                    _activeProject = value;
+                    RaisePropertyChanged("ActiveProject");
+                    RaisePropertyChanged("IsActiveProjectOpen");
                 }
             }
         }
 
-        private ConfigureQueriesViewModel _configureQueriesViewModel;
-        public ConfigureQueriesViewModel ConfigureQueriesViewModel
+        public bool IsActiveProjectOpen
         {
-            get { return _configureQueriesViewModel; }
-            set
-            {
-                if (_configureQueriesViewModel != value)
-                {
-                    _configureQueriesViewModel = value;
-                    RaisePropertyChanged("ConfigureQueriesViewModel");
-                }
-            }
+            get { return ActiveProject != null; }
         }
 
-        private bool _isDetailedComparisonSelected;
-        public bool IsDetailedComparisonSelected
-        {
-            get { return _isDetailedComparisonSelected; }
-            set
-            {
-                if (_isDetailedComparisonSelected != value)
-                {
-                    _isDetailedComparisonSelected = value;
-                    RaisePropertyChanged("IsDetailedComparisonSelected");
-                }
-            }
-        }
 
-        private bool _isConfigureQueriesSelected;
-        public bool IsConfigureQueriesSelected
-        {
-            get { return _isConfigureQueriesSelected; }
-            set
-            {
-                if (_isConfigureQueriesSelected != value)
-                {
-                    _isConfigureQueriesSelected = value;
-                    RaisePropertyChanged("IsConfigureQueriesSelected");
-                }
-            }
-        }
-
-        private PropertyAppendLogWriter<ConfigureQueriesViewModel> _logWriter;
-        public PropertyAppendLogWriter<ConfigureQueriesViewModel> LogWriter { get { return _logWriter; } }
-
-        public QueryConfiguration QueryConfiguration { get; set; }
+        public RelayCommand<ProjectViewModel> SelectProjectCommand { private set; get; }
+        public RelayCommand NewProjectCommand { private set; get; }
+        public RelayCommand OpenProjectCommand { private set; get; }
+        public RelayCommand CloseActiveProjectCommand { private set; get; }
+        public RelayCommand CloseAllCommand { private set; get; }
+        public RelayCommand ExitWindowCommand { private set; get; }
+        public RelayCommand SaveProjectCommand { private set; get; }
+        public RelayCommand SaveAsProjectCommand { private set; get; }
 
         public MainWindowViewModel()
         {
-            UnLocked = true;
-            IsConfigureQueriesSelected = true;
-            IsDetailedComparisonSelected = false;
+            _openProjects = new ObservableCollection<ProjectViewModel>();
 
-            ColumnDiffViewModel = new ColumnDiffViewModel(this);
-            ConfigureQueriesViewModel = new ConfigureQueriesViewModel(this);
-            QueryConfiguration = new QueryConfiguration();
-
-            this._logWriter = 
-                new PropertyAppendLogWriter<ConfigureQueriesViewModel>(
-                    this.ConfigureQueriesViewModel, x => x.Output);
-        }
-
-        public void Lock()
-        {
-            UnLocked = false;
-        }
-        public void UnLock()
-        {
-            UnLocked = true;
-        }
-
-        public void SelectEditQueryTab()
-        {
-            IsDetailedComparisonSelected = false;
-            IsConfigureQueriesSelected = true;
-        }
-
-        public void SelectDetailedComparisonTab()
-        {
-            IsDetailedComparisonSelected = true;
-            IsConfigureQueriesSelected = false;
-        }
-
-        public static string SaveFilePath =
-                Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "CompareResults.GUI.xml");
-
-        private void SaveState(string path)
-        {
-            using (var writer = new System.IO.StreamWriter(path))
+            SelectProjectCommand = new RelayCommand<ProjectViewModel>((project) =>
             {
-                var serializer = new XmlSerializer(typeof(QueryConfiguration));
-                serializer.Serialize(writer, QueryConfiguration);
-                writer.Flush();
+                SelectActiveProject(project);
+            });
+
+            NewProjectCommand = new RelayCommand(() =>
+            {
+                var proj = new ProjectViewModel();
+                proj.ProjectName = ProjectViewModel.UnNamedProjectName; // bug waiting to happen. names should be more unique because of how saving saving works at
+                SelectActiveProject(proj);
+                OpenProjects.Add(proj);
+            });
+
+            CloseActiveProjectCommand = new RelayCommand(() =>
+            {
+                if (ActiveProject != null)
+                {
+                    // TODO: Ask if to save first
+                    ActiveProject.SaveState();
+                    OpenProjects.Remove(ActiveProject);
+
+                    SelectActiveProject(OpenProjects.LastOrDefault());
+                }
+            });
+
+            OpenProjectCommand = new RelayCommand(() =>
+            {
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    var proj = ProjectViewModel.FromFile(openFileDialog.FileName);
+                    if (proj != null)
+                    {
+                        SelectActiveProject(proj);
+                        OpenProjects.Add(proj);
+                    }
+                }
+            });
+
+            SaveProjectCommand = new RelayCommand(() => {
+                if (ActiveProject.ProjectName == ProjectViewModel.UnNamedProjectName)
+                {
+                    SaveAs();
+                } else
+                {
+                    ActiveProject.SaveState();
+                }
+                
+            });
+
+            SaveAsProjectCommand = new RelayCommand(() =>
+            {
+                SaveAs();
+            });
+
+            CloseAllCommand = new RelayCommand(() => {
+                foreach (var item in OpenProjects)
+                {
+                    item.SaveState();
+                }
+
+                ActiveProject = null;
+                OpenProjects.Clear();
+            });
+        }
+
+        private void SelectActiveProject(ProjectViewModel project)
+        {
+            if (project != null)
+            {
+                if (ActiveProject != null)
+                {
+                    ActiveProject.IsProjectSelected = false;
+                }
+                
+                project.IsProjectSelected = true;
+            }
+            ActiveProject = project;
+        }
+
+        private void SaveAs()
+        {
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                ActiveProject.ProjectName = saveDialog.FileName;
+                ActiveProject.SaveState();
             }
         }
 
         internal void SaveState()
         {
-            SaveState(SaveFilePath);
+            foreach (var item in OpenProjects)
+            {
+                item.SaveState();
+            }
         }
     }
 }
+
