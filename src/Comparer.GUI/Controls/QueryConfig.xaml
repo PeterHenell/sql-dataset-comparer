@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:dstools="clr-namespace:DataSetTools;assembly=DataSetTools"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
+             xmlns:selectors="clr-namespace:Comparer.GUI.Selectors"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <ObjectDataProvider x:Key="enumValues"
@@ -15,35 +16,87 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </UserControl.Resources>
+
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="24" />
-            <RowDefinition Height="24" />
-            <RowDefinition Height="24" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <DataTemplate x:Key="QueryTemplate">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24" />
+                        <RowDefinition Height="24" />
+                        <RowDefinition Height="24" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-        <Button Grid.Column="0" Grid.Row="0" Content="Connection..." Command="{Binding OpenConnectionGUICommand}" />
-        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ConnectionString, Mode=TwoWay}" Width="Auto" />
+                    <Button Grid.Column="0" Grid.Row="0" Content="Connection..." Command="{Binding OpenConnectionGUICommand}" />
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ConnectionString, Mode=TwoWay}" Width="Auto" />
 
-        <Label Content="Query Nick" Grid.Row="1" Grid.Column="0" />
-        <TextBox Text="{Binding OutputFile, Mode=TwoWay}"  Grid.Column="1" Grid.Row="1" />
+                    <Label Content="Input Nick" Grid.Row="1" Grid.Column="0" />
+                    <TextBox Text="{Binding OutputFile, Mode=TwoWay}"  Grid.Column="1" Grid.Row="1" />
 
-        <Label Content="Query:" Grid.Row="2" Grid.Column="0" />
-        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Source={StaticResource enumValues}}" SelectedItem="{Binding InputType, Mode=TwoWay}"></ComboBox>
-            <TextBox Text="{Binding QueryText, Mode=TwoWay}"  Grid.Column="0" 
-                 Grid.Row="3" 
-                 Grid.ColumnSpan="2" 
-                 AcceptsReturn="True" 
-                 TextWrapping="Wrap"
-                 Background="AliceBlue"/>
+                    <Label Content="Query:" Grid.Row="2" Grid.Column="0" />
+            
+                    <TextBox Text="{Binding QueryText, Mode=TwoWay}"  Grid.Column="0" 
+                                 Grid.Row="3" 
+                                 Grid.ColumnSpan="2" 
+                                 AcceptsReturn="True" 
+                                 TextWrapping="Wrap"
+                                 Background="AliceBlue"/>   
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="CsvFileTemplate">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="24" />
+                        <RowDefinition Height="24" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Grid.Row="0" Content="Select File..." Command="{Binding SelectCsvFileCommand}" />
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding ConnectionString, Mode=TwoWay}" Width="Auto" />
+
+                    <Label Grid.Column="0" Grid.Row="1" Content="Input Nick"  />
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding OutputFile, Mode=TwoWay}" Width="Auto" />
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="NotImplementedTemplate">
+                <Grid >
+                    <TextBlock Text="This input method is not implemented yet" />
+                </Grid>
+            </DataTemplate>
+
+            <selectors:ComparerTypeDataTemplateSelector x:Key="selector" 
+                                                        CsvFileTemplate="{StaticResource CsvFileTemplate}" 
+                                                        QueryTemplate="{StaticResource QueryTemplate}"
+                                                        NotImplementedTemplate="{StaticResource NotImplementedTemplate}"/>
+        </Grid.Resources>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="24" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Compare" Grid.Column="0" Grid.Row="0" Margin="4" />
+            <ComboBox Grid.Column="1" Grid.Row="0" ItemsSource="{Binding Source={StaticResource enumValues}}" SelectedItem="{Binding InputType, Mode=TwoWay}" />
+
+            <ContentControl Grid.Row="1" Grid.ColumnSpan="2"
+                            Content="{Binding InputType}"
+                            ContentTemplateSelector="{StaticResource selector}" />
+        </Grid>
     </Grid>
-
-
 </UserControl>
 
     

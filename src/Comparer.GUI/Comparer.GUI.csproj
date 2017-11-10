@@ -67,6 +67,7 @@
       <DependentUpon>QueryRunningControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Logging\LogWriter.cs" />
+    <Compile Include="Selectors\ComparerTypeDataTemplateSelector.cs" />
     <Compile Include="StatsReportWindow.xaml.cs">
       <DependentUpon>StatsReportWindow.xaml</DependentUpon>
     </Compile>
