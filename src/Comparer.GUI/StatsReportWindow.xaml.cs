@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Comparer.GUI.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ namespace Comparer.GUI
     public partial class StatsReportWindow : Window
     {
         private DataSetTools.DetailedStats stats;
+        StatsReportViewModel vm;
 
         public StatsReportWindow(DataSetTools.DetailedStats stats)
         {
@@ -31,7 +33,8 @@ namespace Comparer.GUI
 
         void StatsReportWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            this.DataContext = stats;
+            vm = new StatsReportViewModel(stats);
+            this.DataContext = vm;
         }
     }
 }
