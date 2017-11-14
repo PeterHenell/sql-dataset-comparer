@@ -18,7 +18,10 @@
                 <Grid Grid.Column="0" Grid.Row="0" Margin="5">
                     <TextBlock Text="Columns and how many rows they had mismatching values" />
                 </Grid>
-                <ListBox ItemsSource="{Binding Values}" Grid.Column="0" Grid.Row="1" Margin="5">
+                <StackPanel Grid.Column="1" Grid.Row="0">
+                    <Button  Content="To Excel..." Command="{Binding ExportToExcelCommand}"/>
+                </StackPanel>
+                <ListBox ItemsSource="{Binding Stats.Values}" Grid.Column="0" Grid.Row="1" Margin="5">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -39,7 +42,7 @@
                                                 <ColumnDefinition Width="400" />
                                             </Grid.ColumnDefinitions>
 
-                                            <TextBlock Text="ColumnName" Grid.Column="0" />
+                                            <TextBlock Text="ColumnName" Grid.Column="0"  />
                                             <TextBlock Text="ExpectedValue" Grid.Column="1" />
                                             <TextBlock Text="ActualValue" Grid.Column="2" />
 
@@ -54,7 +57,7 @@
                                                                 <ColumnDefinition Width="400" />
                                                                 <ColumnDefinition Width="400" />
                                                             </Grid.ColumnDefinitions>
-                                                            <TextBlock Text="{Binding ColumnName}" Grid.Column="0" />
+                                                            <TextBlock Text="{Binding ColumnName}" Grid.Column="0" Padding="0 0 25 0" />
                                                             <TextBlock Text="{Binding ExpectedValue}" Grid.Column="1" />
                                                             <TextBlock Text="{Binding ActualValue}" Grid.Column="2" />
                                                         </Grid>

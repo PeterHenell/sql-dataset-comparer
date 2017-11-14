@@ -74,6 +74,7 @@
     <Compile Include="ViewModels\ColumnMetaData.cs" />
     <Compile Include="ViewModels\ConfigureQueriesViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\StatsReportViewModel.cs" />
     <Compile Include="ViewModels\ProjectViewModel.cs" />
     <Compile Include="ViewModels\QueryConfiguration.cs" />
     <Compile Include="ViewModels\QueryConfigViewModel.cs" />
